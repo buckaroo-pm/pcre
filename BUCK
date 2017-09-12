@@ -28,6 +28,31 @@ macos_flags = [
   '-DMAX_NAME_COUNT=10000',
 ]
 
+linux_flags = [
+  '-DHAVE_DIRENT_H=1',
+  '-DHAVE_SYS_STAT_H=1',
+  '-DHAVE_SYS_TYPES_H=1',
+  '-DHAVE_UNISTD_H=1',
+  '-DHAVE_STDINT_H=1',
+  '-DHAVE_INTTYPES_H=1',
+  '-DHAVE_BCOPY=1',
+  '-DHAVE_MEMMOVE=1',
+  '-DHAVE_STRERROR=1',
+  '-DHAVE_STRTOLL=1',
+  '-DHAVE_STRTOQ=1',
+  '-DPCRE_STATIC=1',
+  '-DSUPPORT_PCRE8=1',
+  '-DNEWLINE=10',
+  '-DPOSIX_MALLOC_THRESHOLD=10',
+  '-DLINK_SIZE=2',
+  '-DPARENS_NEST_LIMIT=250',
+  '-DMATCH_LIMIT=10000000',
+  '-DMATCH_LIMIT_RECURSION=MATCH_LIMIT',
+  '-DPCREGREP_BUFSIZE=20480',
+  '-DMAX_NAME_SIZE=32',
+  '-DMAX_NAME_COUNT=10000',
+]
+
 cxx_binary(
   name = 'dftables',
   headers = merge_dicts(subdir_glob([
@@ -42,6 +67,7 @@ cxx_binary(
   platform_preprocessor_flags = [
     ('default', macos_flags),
     ('^macos.*', macos_flags),
+    ('^linux.*', linux_flags),
   ],
 )
 
@@ -72,6 +98,7 @@ cxx_library(
   platform_preprocessor_flags = [
     ('default', macos_flags),
     ('^macos.*', macos_flags),
+    ('^linux.*', linux_flags),
   ],
   visibility = [
     'PUBLIC',
@@ -101,6 +128,7 @@ cxx_binary(
   platform_preprocessor_flags = [
     ('default', macos_flags),
     ('^macos.*', macos_flags),
+    ('^linux.*', linux_flags),
   ],
   linker_flags = [
     '-lreadline',

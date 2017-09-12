@@ -1,1 +1,9 @@
 .DS_Store
+.deps/
+.libs/
+/build/
+/buck-out/
+/.buckd/
+/buckaroo/
+.buckconfig.local
+BUCKAROO_DEPS

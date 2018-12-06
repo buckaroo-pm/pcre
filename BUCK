@@ -1,7 +1,4 @@
-def merge_dicts(x, y):
-  z = x.copy()
-  z.update(y)
-  return z
+load('//:subdir_glob.bzl', 'subdir_glob')
 
 macos_flags = [
   '-DHAVE_DIRENT_H=1',
@@ -55,50 +52,48 @@ linux_flags = [
 
 cxx_binary(
   name = 'dftables',
-  headers = merge_dicts(subdir_glob([
+  headers = dict(subdir_glob([
     ('', '*.h'),
     ('', 'pcre_maketables.c'),
-  ]), {
-    'pcre.h': 'pcre.h.generic',
-  }),
+  ]).items() + [
+    ('pcre.h', 'pcre.h.generic'),
+  ]),
   srcs = [
     'dftables.c',
   ],
   platform_preprocessor_flags = [
-    ('default', macos_flags),
-    ('^macos.*', macos_flags),
-    ('^linux.*', linux_flags),
+    ('macos.*', macos_flags),
+    ('linux.*', linux_flags),
   ],
 )
 
 genrule(
   name = 'pcre_chartables',
   out = 'pcre_chartables.c',
-  cmd = '$(location :dftables) $OUT',
+  cmd = '$(exe :dftables) $OUT',
 )
 
 cxx_library(
   name = 'pcre',
   header_namespace = '',
-  exported_headers = merge_dicts(subdir_glob([
+  exported_headers = dict(subdir_glob([
     ('', '*.h'),
-  ]), {
-    'pcre.h': 'pcre.h.generic',
-  }),
+  ]).items() + [
+    ('pcre.h', 'pcre.h.generic'),
+  ]),
   headers = {
     'config.h': 'config.h.generic',
   },
   srcs = glob([
     'pcre_*.c',
-  ], excludes = glob([
+  ], exclude = glob([
     'pcre_*_test.c',
   ])) + [
     ':pcre_chartables',
   ],
   platform_preprocessor_flags = [
-    ('default', macos_flags),
-    ('^macos.*', macos_flags),
-    ('^linux.*', linux_flags),
+    ('macos.*', macos_flags),
+    ('linux.*', linux_flags),
   ],
   visibility = [
     'PUBLIC',
@@ -126,9 +121,8 @@ cxx_binary(
     'pcretest.c',
   ],
   platform_preprocessor_flags = [
-    ('default', macos_flags),
-    ('^macos.*', macos_flags),
-    ('^linux.*', linux_flags),
+    ('macos.*', macos_flags),
+    ('linux.*', linux_flags),
   ],
   linker_flags = [
     '-lreadline',
